@@ -22,7 +22,7 @@ set -e
 set -o pipefail
 
 version=0.1.1
-local_port=3000
+local_port=13000
 local_image=local_pluosi/app_host:$version
 container_name=app_host
 dockerdir=$(cd "$(dirname "$(dirname $0)")"; pwd -P)
@@ -132,7 +132,7 @@ start(){
     loginfo "Starting up new server container"
     (
         set -x
-        docker run $user_args -it -d --name $container_name -h $container_name -v $dockerdir/shared:/app/shared -p $local_port:8686 $local_image
+        docker run $user_args -it -d --name $container_name -v $dockerdir/shared:/app/shared -p $local_port:8686 $local_image
     )
 }
 
