@@ -6,6 +6,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         imagemagick \
         libsqlite3-dev \
+        nginx \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem sources --add https://gems.ruby-china.com --remove https://rubygems.org/
@@ -17,6 +18,7 @@ WORKDIR /app
 ADD Gemfile* ./
 RUN bundle install
 COPY . .
+COPY docker/nginx.conf /etc/nginx/sites-enabled/app.conf
 
 RUN if [ -f shared/production.sqlite3 ];then mv shared/production.sqlite3 db/production.sqlite3 ; fi
 
@@ -29,4 +31,4 @@ RUN rake assets:precompile
 
 EXPOSE 8686
 
-CMD /bin/bash docker/ln_shared_files.sh && puma -C config/puma.rb
+CMD /bin/bash docker/ln_shared_files.sh && service nginx start && puma -C config/puma.rb
